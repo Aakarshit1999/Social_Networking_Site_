@@ -1,16 +1,17 @@
 import React, { Component } from 'react'
-
-class Signup extends Component {
+import { Redirect } from "react-router-dom"
+class Signin extends Component {
 
     constructor() {
         super()
         this.state = {
-            name: "",
+            
             email: "",
             password: "",
             error: "",
-            open: false
-        }
+            redirectToRefer: false,
+            loading: false
+        };
     }
 
     handleChange = (name) => (event) => {
@@ -18,32 +19,41 @@ class Signup extends Component {
         this.setState({[name]: event.target.value});
     };
 
+    authenticate  (jwt, next) {
+        if(typeof window !== "undefined") {
+            localStorage.setItem("jwt" , JSON.stringify(jwt))
+            next()
+        };
+    }
     clickSubmit = event => {
-        event.preventDefault()
-        const {name, email, password} = this.state
+        event.preventDefault();
+        this.setState({loading: true})
+        const {email, password} = this.state
         const user = {
-            name,
+            
             email,
             password
         };
 
         //console.log(user);
-        this.signup(user)
+        this.signin(user)
         .then(data => {
-            if(data.error) this.setState({error: data.error})
-                else this.setState({
-                    error: "",
-                    name: "",
-                    email:  "",
-                    password: "",
-                    
-                    open: true
-                });
+            if(data.error) {
+                this.setState({error: data.error, loading: false})
+            }
+                else {
+                    //authenticate
+                    this.authenticate(data, () => {
+                        this.setState({redirectToRefer: true})
+                    })
+                    //redirect
+
+                };
         });
     };
 
-    signup = user => {
-        return fetch("http://localhost:8080/signup", {
+    signin = user => {
+        return fetch("http://localhost:8080/signin", {
             method: "POST",
             headers: {
                 Accept: "application/json",
@@ -58,32 +68,34 @@ class Signup extends Component {
     };
 
     render() {
-        const {name, email, password, error, open} = this.state
+        const {email, password, error, redirectToRefer, loading} = this.state
+        if(redirectToRefer) {
+            return <Redirect to="/" />
+        }
         return (
             
             <div className='container'>
-                <h2>SIGN UP</h2>
+                <h2>SIGN IN</h2>
                 <div className='alert alert-danger' style={{display: error ? "" : "none"}}>
                     {error}
                 </div>
-                <div className='alert alert-info' style={{display: open ? "" : "none"}}>
-                    New account is successfully created. Please sign in.
-                </div>
+               {loading ?( <div className='jumbotron text-center'>
+                   <h2>Loading...</h2>
+               </div>):(
+                   ""
+               )}
                 <form>
-                    <div className="form-group">
-                        <label className="text-muted">Name</label>
-                        <input onChange={this.handleChange("name")} type="text" className="form-control" value={name} />
-                    </div>
+                   
                     <div className="form-group">
                         <label className="text-muted">Email</label>
                         <input onChange={this.handleChange("email")} type="email" className="form-control" value={email}/>
                     </div>
-                     <div className="form-group">
+                    <div className="form-group">
                         <label className="text-muted">Password</label>
                         <input onChange={this.handleChange("password")} type="password" className="form-control" value={password} />
                     </div>
 
-                    <button onClick={this.clickSubmit} type="submit" className="btn btn-primary" >Submit</button>
+                    <button onClick={this.clickSubmit} type="submit" className="btn btn-primary" >Login</button>
                 </form>
                 
             </div>
@@ -91,5 +103,4 @@ class Signup extends Component {
     }
 }
 
-
-export default Signup;
+export default Signin;
