@@ -11,16 +11,16 @@ const isActive = (history, path) => {
 const Menu = ({ history }) => (
     <div>
         <ul className="nav nav-tabs bg-primary">
-            <li className="nav-item text-dark">
+            <li className="nav-item">
                 <Link
-                    className='nav-link text-dark'
+                    className='nav-link'
                     style={isActive(history, "/")}
                     to="/">Home</Link>
             </li>
 
-            <li className="nav-item text-dark">
+            <li className="nav-item">
                 <Link
-                    className='nav-link text-dark'
+                    className='nav-link'
                     style={isActive(history, "/users")}
                     to="/users">Users</Link>
             </li>
@@ -28,12 +28,12 @@ const Menu = ({ history }) => (
 
             {!isAuthenticated() && (
                 <>
-                    <li className="nav-item text-dark">
-                        <Link className='nav-link text-dark'
+                    <li className="nav-item">
+                        <Link className='nav-link'
                             style={isActive(history, "/signin")}
                             to="/signin">Sign In</Link>
                     </li>
-                    <li className="nav-item text-dark">
+                    <li className="nav-item">
                         <Link className='nav-link'
                             style={isActive(history, "/signup")}
                             to="/signup">Sign Up</Link>
@@ -44,8 +44,8 @@ const Menu = ({ history }) => (
 
             {isAuthenticated() && (
                 <>
-                    <li className="nav-item text-dark">
-                        <a className='nav-link text-dark'
+                    <li className="nav-item">
+                        <a className='nav-link'
                             style={
                                 (isActive(history, "/signup"),
                                     { cursor: "pointer", color: "#fff" })
@@ -56,7 +56,7 @@ const Menu = ({ history }) => (
                     </li>
                     <li className="nav-item">
                         <Link 
-                            className='nav-link text-dark' 
+                            className='nav-link' 
                             to={`/user/${isAuthenticated().user._id}`} 
                             style={isActive(history , `user/${isAuthenticated().user._id}`)}>
                             {`${isAuthenticated().user.name}'s profile`}
